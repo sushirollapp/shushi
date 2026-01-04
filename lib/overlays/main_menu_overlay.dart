@@ -168,142 +168,194 @@ class _SushiShopDialogState extends State<_SushiShopDialog> {
   Widget build(BuildContext context) {
     final coins = _dataManager.totalCoins;
     final selectedSkinId = _dataManager.selectedSkin;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    return AlertDialog(
+    return Dialog(
       backgroundColor: GameColors.riceWhite,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(GameConstants.borderRadiusMedium),
       ),
-      title: Column(
-        children: [
-          Text(
-            'Sushi Shop',
-            style: TextStyle(
-              fontFamily: AppTheme.headlineFont,
-              color: GameColors.noriBlack,
-              fontSize: 28,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: GameConstants.spacingSmall),
-          // Coins display
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: GameConstants.spacingMedium,
-              vertical: GameConstants.spacingSmall,
-            ),
-            decoration: BoxDecoration(
-              color: GameColors.woodLight,
-              borderRadius: BorderRadius.circular(
-                GameConstants.borderRadiusSmall,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: screenHeight * 0.7,
+          maxWidth: 400,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              child: Column(
+                children: [
+                  Text(
+                    'Sushi Shop',
+                    style: TextStyle(
+                      fontFamily: AppTheme.headlineFont,
+                      color: GameColors.noriBlack,
+                      fontSize: 26,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  // Coins display
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: GameColors.woodLight,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('⭐', style: TextStyle(fontSize: 18)),
+                        const SizedBox(width: 6),
+                        Text(
+                          '$coins',
+                          style: TextStyle(
+                            fontFamily: AppTheme.bodyFont,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: GameColors.salmonOrange,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('⭐', style: TextStyle(fontSize: 20)),
-                const SizedBox(width: 6),
-                Text(
-                  '$coins',
-                  style: TextStyle(
-                    fontFamily: AppTheme.bodyFont,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: GameColors.salmonOrange,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 350,
-        child: ListView.builder(
-          itemCount: GameSkins.allSkins.length,
-          itemBuilder: (context, index) {
-            final skin = GameSkins.allSkins[index];
-            final isOwned = _dataManager.isSkinOwned(skin.id);
-            final isSelected = selectedSkinId == skin.id;
-            final canAfford = coins >= skin.price;
+            
+            // Divider
+            Divider(color: GameColors.woodDark, height: 1),
+            
+            // Skin List
+            Flexible(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shrinkWrap: true,
+                itemCount: GameSkins.allSkins.length,
+                itemBuilder: (context, index) {
+                  final skin = GameSkins.allSkins[index];
+                  final isOwned = _dataManager.isSkinOwned(skin.id);
+                  final isSelected = selectedSkinId == skin.id;
+                  final canAfford = coins >= skin.price;
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: GameConstants.spacingSmall),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? GameColors.matchaGreen.withValues(alpha: 0.2)
-                    : GameColors.woodLight,
-                borderRadius: BorderRadius.circular(
-                  GameConstants.borderRadiusSmall,
-                ),
-                border: isSelected
-                    ? Border.all(color: GameColors.matchaGreen, width: 2)
-                    : null,
-              ),
-              child: ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: GameColors.riceWhite,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                  return GestureDetector(
+                    onTap: () => _handleSkinAction(skin),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? GameColors.matchaGreen.withValues(alpha: 0.15)
+                            : GameColors.woodLight,
+                        borderRadius: BorderRadius.circular(14),
+                        border: isSelected
+                            ? Border.all(color: GameColors.matchaGreen, width: 2)
+                            : Border.all(color: Colors.transparent, width: 2),
                       ),
-                    ],
+                      child: Row(
+                        children: [
+                          // Emoji Avatar
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: GameColors.riceWhite,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                skin.emoji,
+                                style: const TextStyle(fontSize: 24),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          
+                          // Name & Description
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  skin.name,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.bodyFont,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: GameColors.noriBlack,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  skin.description,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.bodyFont,
+                                    fontSize: 11,
+                                    color: GameColors.noriBlack.withValues(alpha: 0.6),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          
+                          // Action Button
+                          _buildActionButton(skin, isOwned, isSelected, canAfford),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            
+            // Close Button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: GameColors.woodLight,
                   ),
-                  child: Center(
-                    child: Text(
-                      skin.emoji,
-                      style: const TextStyle(fontSize: 28),
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontFamily: AppTheme.bodyFont,
+                      fontSize: 16,
+                      color: GameColors.matchaGreen,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                title: Text(
-                  skin.name,
-                  style: TextStyle(
-                    fontFamily: AppTheme.bodyFont,
-                    fontWeight: FontWeight.bold,
-                    color: GameColors.noriBlack,
-                  ),
-                ),
-                subtitle: Text(
-                  skin.description,
-                  style: TextStyle(
-                    fontFamily: AppTheme.bodyFont,
-                    fontSize: 12,
-                    color: GameColors.noriBlack.withValues(alpha: 0.7),
-                  ),
-                ),
-                trailing: _buildActionButton(
-                  skin,
-                  isOwned,
-                  isSelected,
-                  canAfford,
-                ),
-                onTap: () => _handleSkinAction(skin),
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(
-            'Close',
-            style: TextStyle(
-              fontFamily: AppTheme.bodyFont,
-              color: GameColors.matchaGreen,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -315,17 +367,20 @@ class _SushiShopDialogState extends State<_SushiShopDialog> {
   ) {
     if (isSelected) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
           color: GameColors.matchaGreen,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: const Text(
-          '✓',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+        child: const Center(
+          child: Text(
+            '✓',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
       );
@@ -333,13 +388,13 @@ class _SushiShopDialogState extends State<_SushiShopDialog> {
 
     if (isOwned) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: GameColors.infoBlue.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
-          'Select',
+          'Use',
           style: TextStyle(
             fontFamily: AppTheme.bodyFont,
             fontSize: 12,
@@ -352,18 +407,18 @@ class _SushiShopDialogState extends State<_SushiShopDialog> {
 
     // Not owned - show price
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: canAfford
             ? GameColors.salmonOrange.withValues(alpha: 0.2)
-            : GameColors.woodDark,
-        borderRadius: BorderRadius.circular(12),
+            : GameColors.woodDark.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('⭐', style: TextStyle(fontSize: 14)),
-          const SizedBox(width: 4),
+          const Text('⭐', style: TextStyle(fontSize: 12)),
+          const SizedBox(width: 3),
           Text(
             '${skin.price}',
             style: TextStyle(
@@ -371,7 +426,7 @@ class _SushiShopDialogState extends State<_SushiShopDialog> {
               fontSize: 12,
               color: canAfford
                   ? GameColors.salmonOrange
-                  : GameColors.noriBlack.withValues(alpha: 0.5),
+                  : GameColors.noriBlack.withValues(alpha: 0.4),
               fontWeight: FontWeight.bold,
             ),
           ),
