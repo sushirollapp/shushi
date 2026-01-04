@@ -1,0 +1,256 @@
+# ============================================
+# FLUTTER / DART
+# ============================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+/coverage/
+**/doc/api/
+pubspec.lock
+
+# ============================================
+# ANDROID - PERSONAL/LOCAL FILES
+# ============================================
+# Contains local SDK paths with username
+android/local.properties
+
+# Build outputs
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle/
+android/app/build/
+android/build/
+**/android/**/gradle-wrapper.jar
+**/android/.gradle/
+
+# Signing keys (NEVER commit these)
+*.jks
+*.keystore
+android/key.properties
+android/app/*.jks
+android/app/*.keystore
+
+# Generated files
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# ============================================
+# iOS - PERSONAL/LOCAL FILES
+# ============================================
+# Generated files containing local paths/username
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Flutter/.last_build_id
+
+# Build & derived data
+ios/build/
+ios/DerivedData/
+ios/.symlinks/
+ios/Pods/
+ios/Podfile.lock
+
+# Xcode user-specific files
+ios/**/*.xcworkspace/xcuserdata/
+ios/**/*.xcodeproj/xcuserdata/
+ios/**/*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+ios/**/xcshareddata/WorkspaceSettings.xcsettings
+
+# Generated plugin registrant
+ios/Runner/GeneratedPluginRegistrant.*
+
+# ============================================
+# macOS - PERSONAL/LOCAL FILES
+# ============================================
+# Generated files containing local paths/username
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Build outputs
+macos/build/
+macos/Pods/
+macos/Podfile.lock
+
+# Xcode user-specific files
+macos/**/*.xcworkspace/xcuserdata/
+macos/**/*.xcodeproj/xcuserdata/
+macos/**/*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+macos/**/xcshareddata/WorkspaceSettings.xcsettings
+
+# ============================================
+# WINDOWS
+# ============================================
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
+windows/flutter/ephemeral/
+
+# ============================================
+# LINUX
+# ============================================
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+linux/flutter/ephemeral/
+
+# ============================================
+# WEB
+# ============================================
+web/.dart_tool/
+web/.packages
+
+# ============================================
+# IDE & EDITOR FILES (contain local paths)
+# ============================================
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Cursor IDE
+.cursor/
+
+# Other editors
+*.swp
+*.swo
+*~
+.atom/
+
+# ============================================
+# OS-GENERATED FILES (may contain metadata)
+# ============================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# BUILD & COMPILATION ARTIFACTS
+# ============================================
+*.class
+*.log
+*.pyc
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.obj
+*.pdb
+
+# ============================================
+# SYMBOLICATION & OBFUSCATION
+# ============================================
+app.*.symbols
+app.*.map.json
+*.dSYM/
+*.dSYM.zip
+
+# ============================================
+# VERSION CONTROL ARTIFACTS
+# ============================================
+.svn/
+.hg/
+.bzr/
+
+# ============================================
+# MISCELLANEOUS
+# ============================================
+.history/
+.build/
+.buildlog/
+migrate_working_dir/
+.packages
+.swiftpm/
+
+# Crash logs
+crash_log_*.txt
+*.crash
+
+# Test outputs
+test-results/
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ============================================
+# SENSITIVE / CREDENTIALS (Safety net)
+# ============================================
+*.pem
+*.p12
+*.cer
+*.crt
+*.key
+secrets.json
+credentials.json
+service-account*.json
+google-services.json
+GoogleService-Info.plist
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# ============================================
+# KEYSTORE & SIGNING (CRITICAL - NEVER COMMIT)
+# ============================================
+# Keystore files
+*.jks
+*.keystore
+sushiroll-release.jks
+upload-keystore.jks
+
+# Base64 encoded keystores
+*-keystore-base64.txt
+keystore.b64
+*.b64
+
+# Key properties (contains passwords)
+key.properties
+android/key.properties
+android/app/key.properties
+
+# ============================================
+# SCRIPT OUTPUTS
+# ============================================
+# Keystore generation script outputs
+scripts/*.jks
+scripts/*.keystore
+scripts/*-base64.txt
+scripts/*.b64
+
+# documentation
+docsflie/
+

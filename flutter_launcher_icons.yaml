@@ -1,0 +1,28 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  
+  # Adaptive icon for Android (better rounded corners)
+  adaptive_icon_background: "#FF8A65"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+  
+  # Web icons
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    background_color: "#FF8A65"
+    theme_color: "#FF8A65"
+  
+  # Windows icons
+  windows:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    icon_size: 256
+  
+  # macOS icons  
+  macos:
+    generate: true
+    image_path: "assets/images/app_icon.png"

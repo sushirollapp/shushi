@@ -1,0 +1,174 @@
+# ============================================
+# SUSHI ROLL RUSH - Android Release Workflow
+# ============================================
+# Builds signed APK and AAB on every push
+# Uses keystore from GitHub Secrets (base64 encoded)
+# NEVER exposes secrets in logs
+# ============================================
+
+name: Android Release Build
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - release/*
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (release/debug)'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+
+# Prevent concurrent builds
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.38.5'
+  JAVA_VERSION: '17'
+
+jobs:
+  build-android:
+    name: Build Android APK & AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ============================================
+      # CHECKOUT & SETUP
+      # ============================================
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Set up Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Installation
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      # ============================================
+      # DEPENDENCIES
+      # ============================================
+      - name: Get Flutter Dependencies
+        run: flutter pub get
+
+      # ============================================
+      # KEYSTORE SETUP (Secure)
+      # ============================================
+      - name: Decode Keystore
+        env:
+          SUSHIROLL_KEYSTORE_BASE64: ${{ secrets.SUSHIROLL_KEYSTORE_BASE64 }}
+        run: |
+          # Decode keystore from base64 secret
+          echo "$SUSHIROLL_KEYSTORE_BASE64" | base64 --decode > android/app/sushiroll-release.jks
+          
+          # Verify file was created (without exposing content)
+          if [ -f "android/app/sushiroll-release.jks" ]; then
+            echo "✅ Keystore file created successfully"
+          else
+            echo "❌ Failed to create keystore file"
+            exit 1
+          fi
+
+      - name: Create key.properties
+        env:
+          SUSHIROLL_KEY_ALIAS: ${{ secrets.SUSHIROLL_KEY_ALIAS }}
+          SUSHIROLL_KEY_PASSWORD: ${{ secrets.SUSHIROLL_KEY_PASSWORD }}
+          SUSHIROLL_STORE_PASSWORD: ${{ secrets.SUSHIROLL_STORE_PASSWORD }}
+        run: |
+          # Create key.properties file for Gradle
+          cat > android/key.properties << EOF
+          storePassword=$SUSHIROLL_KEY_PASSWORD
+          keyPassword=$SUSHIROLL_STORE_PASSWORD
+          keyAlias=$SUSHIROLL_KEY_ALIAS
+          storeFile=sushiroll-release.jks
+          EOF
+          
+          echo "✅ key.properties created"
+
+      # ============================================
+      # BUILD APK
+      # ============================================
+      - name: Build Release APK
+        run: |
+          flutter build apk --release --no-tree-shake-icons
+          echo "✅ APK build completed"
+
+      # ============================================
+      # BUILD AAB (App Bundle)
+      # ============================================
+      - name: Build Release AAB
+        run: |
+          flutter build appbundle --release --no-tree-shake-icons
+          echo "✅ AAB build completed"
+
+      # ============================================
+      # CLEANUP SENSITIVE FILES
+      # ============================================
+      - name: Cleanup Keystore & Credentials
+        if: always()
+        run: |
+          # Securely delete keystore and credentials
+          rm -f android/app/sushiroll-release.jks
+          rm -f android/key.properties
+          echo "🔒 Sensitive files cleaned up"
+
+      # ============================================
+      # UPLOAD ARTIFACTS
+      # ============================================
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sushiroll-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sushiroll-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      # ============================================
+      # BUILD SUMMARY
+      # ============================================
+      - name: Build Summary
+        run: |
+          echo "## 🍣 Sushi Roll Rush - Build Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts Generated:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **APK**: \`app-release.apk\`" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **AAB**: \`app-release.aab\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Info:" >> $GITHUB_STEP_SUMMARY
+          echo "- Flutter: ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Java: ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

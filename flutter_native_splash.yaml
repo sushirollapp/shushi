@@ -1,0 +1,26 @@
+flutter_native_splash:
+  # Soft matcha green gradient base - matches the sushi theme
+  color: "#D4E9C8"
+  
+  # Dark mode - warm wood tone
+  color_dark: "#3E2723"
+  
+  # Main splash image - the cute sushi character (small centered)
+  image: "assets/images/app_icon.png"
+  
+  # Android 12+ specific settings  
+  android_12:
+    image: "assets/images/app_icon.png"
+    icon_background_color: "#D4E9C8"
+    color: "#D4E9C8"
+    color_dark: "#3E2723"
+    
+  # Web settings
+  web: true
+  web_image_mode: center
+  
+  # iOS settings
+  ios: true
+  
+  # Fullscreen splash
+  fullscreen: true
