@@ -100,10 +100,10 @@ jobs:
           SUSHIROLL_KEY_PASSWORD: ${{ secrets.SUSHIROLL_KEY_PASSWORD }}
           SUSHIROLL_STORE_PASSWORD: ${{ secrets.SUSHIROLL_STORE_PASSWORD }}
         run: |
-          # Create key.properties file for Gradle
-          cat > android/key.properties << EOF
-          storePassword=$SUSHIROLL_KEY_PASSWORD
-          keyPassword=$SUSHIROLL_STORE_PASSWORD
+          # Create key.properties file for Gradle (in android/app/ directory)
+          cat > android/app/key.properties << EOF
+          storePassword=$SUSHIROLL_STORE_PASSWORD
+          keyPassword=$SUSHIROLL_KEY_PASSWORD
           keyAlias=$SUSHIROLL_KEY_ALIAS
           storeFile=sushiroll-release.jks
           EOF
@@ -134,7 +134,7 @@ jobs:
         run: |
           # Securely delete keystore and credentials
           rm -f android/app/sushiroll-release.jks
-          rm -f android/key.properties
+          rm -f android/app/key.properties
           echo "🔒 Sensitive files cleaned up"
 
       # ============================================
